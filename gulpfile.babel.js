@@ -28,7 +28,7 @@ gulp.task('copy:html', () =>
 
 gulp.task('serve',() => {
 	runSequence('build:js', 'copy:html', 'browser-sync', () => {
-		gulp.watch(['../pyrite/lib/**/*.js'], ['build:js', browserSync.reload]);
+		gulp.watch(['node_modules/pyrite/lib/**/*.js'], ['build:js', browserSync.reload]);
 		gulp.watch(['app/**/*.js','app/**/*.html'], ['build:js', 'copy:html', browserSync.reload]);
 	});
 });

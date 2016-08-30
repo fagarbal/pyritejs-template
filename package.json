@@ -1,6 +1,6 @@
 {
   "name": "pyrite-template",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Just another JavaScript MVW Framework",
   "dependencies": {
     "babel-preset-es2015": "^6.14.0",
@@ -11,7 +11,7 @@
     "gulp-babel": "^6.1.2",
     "gulp-sourcemaps": "^1.6.0",
     "gulp-uglify": "^2.0.0",
-    "pyrite": "^0.0.17",
+    "pyrite": "^0.0.19",
     "run-sequence": "^1.2.2",
     "stringify": "^5.1.0",
     "vinyl-buffer": "^1.0.0",
