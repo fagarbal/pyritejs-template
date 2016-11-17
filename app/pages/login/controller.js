@@ -4,6 +4,6 @@ export default class HomeController {
 	}
 
 	login() {
-		this.username = 'fabio';
+		this.username = this.newusername;
 	}
 }
