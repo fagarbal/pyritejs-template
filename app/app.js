@@ -19,4 +19,11 @@ pyrite('http://localhost:4000')
 	server.Location.getCities().then((data) => console.log(data));
 
 	server.Example.setNumbers([4,5,6]);
+
+	server.Example.divide(0, 4)
+	.then((data) => console.log(data))
+	.catch((error) => {
+		console.log(error)
+	});
 });
+

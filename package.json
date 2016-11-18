@@ -14,6 +14,7 @@
     "pyrite": "^0.0.19",
     "run-sequence": "^1.2.2",
     "stringify": "^5.1.0",
+    "uuid": "^2.0.3",
     "vinyl-buffer": "^1.0.0",
     "vinyl-source-stream": "^1.1.0"
   },
