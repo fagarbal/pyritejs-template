@@ -8,11 +8,12 @@ import uglify from 'gulp-uglify';
 import stringify from 'stringify';
 import browserSync from 'browser-sync';
 import runSequence from 'run-sequence';
+import babelConfig from './babelrc.json';
 
 gulp.task('build:js', () =>
-	browserify('app/app.js', { debug: true })
+	browserify('test/app.js', { debug: true })
 	.transform(stringify(['.html']))
-	.transform(babelify, { presets: ['es2015'] })
+	.transform(babelify, babelConfig)
 	.bundle()
 	.pipe(source('app.js'))
 	.pipe(buffer())
@@ -22,14 +23,14 @@ gulp.task('build:js', () =>
 );
 
 gulp.task('copy:html', () => 
-	gulp.src('app/index.html')
+	gulp.src('test/index.html')
     .pipe(gulp.dest('dist/'))
 );
 
 gulp.task('serve',() => {
 	runSequence('build:js', 'copy:html', 'browser-sync', () => {
 		gulp.watch(['node_modules/pyrite/lib/**/*.js'], ['build:js', browserSync.reload]);
-		gulp.watch(['app/**/*.js','app/**/*.html'], ['build:js', 'copy:html', browserSync.reload]);
+		gulp.watch(['test/**/*.js','test/**/*.html'], ['build:js', 'copy:html', browserSync.reload]);
 	});
 });
 
