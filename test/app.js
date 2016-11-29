@@ -49,12 +49,16 @@ class ByeWorld{
 	selector: 'melanie',
 	template: templateMelanie,
 	inject: [],
+	as: '$mel',
 	require: ['hello-world']
 })
 class Melanie {
 	constructor() {
 		this.mel = this.helloWorld.name;
 		this.pepe = 'Hola Soy pepe';
+		this.json = {
+			a : "hola"
+		}
 	}
 
 	hallo(a, b, pepe) {
@@ -72,7 +76,7 @@ class Melanie {
 })
 class HelloWorld{
 	constructor(exampleService, melanieService) {
-		this.name = ' Fabio '+ melanieService.hazMiauMiau();
+		this.name = ' LALALALa '+ melanieService.hazMiauMiau();
 		this.exampleService = exampleService;
 		this.count = 0;
 		this.person = {
@@ -84,6 +88,7 @@ class HelloWorld{
 	saludar(event, element) {
 		console.log(event);
 		this.name = 'pepe';
+		this.count++;
 		alert(this.count, event);
 	}
 

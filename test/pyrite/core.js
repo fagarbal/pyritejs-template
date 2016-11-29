@@ -99,11 +99,27 @@ class PyriteCore {
 
 		const fn = (ctrl, component, method, core) => {
 			const ctrlAs = core.components[component].as;
-			const evalString = `
+
+
+			let filter = method.split('#');
+
+			if (filter.length > 1){
+				const type = filter[1].trim()
+				let evalStringCustom = `
+					let ${ctrlAs} = arguments[0];
+					${filter[0]};`
+
+				if (type === 'JSON') {
+					return JSON.stringify(eval(evalStringCustom));
+				}
+			}
+
+			let evalString = `
 				let ${ctrlAs} = arguments[0];
 				${method};`
 
 			return eval(evalString);
+;
 		};
 
 		for (let propertyName of variables){

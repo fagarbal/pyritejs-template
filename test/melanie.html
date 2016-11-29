@@ -1,10 +1,12 @@
 <h2 style="color:red"> Hola soy Melanie</h2>
 <h2 style="color:green"> Hola soy Fabio</h2>
-<button (click)="$ctrl.helloWorld.saludar($event, $element)">{{$ctrl.helloWorld.person.getName()}}</button>
-{{   $ctrl.helloWorld.person.getName() + 'Holaaa' }}
+<button (click)="$mel.helloWorld.saludar($event, $element)">{{$mel.helloWorld.person.getName()}}</button>
+<p>{{   $mel.helloWorld.person.getName() + 'Holaaa' }}</p>
 <span>
-	<span (click)="$ctrl.hallo($event, $element, '{{$ctrl.pepe}}')">{{$ctrl.mel}}</span>
+	<span (click)="$mel.hallo($event, $element, '{{$mel.pepe}}')">{{$mel.mel}}</span>
 </span>
-<a href="www.google.com" (mouseover)="$ctrl.helloWorld.saludar($event, $element)">Holaaa</a>
+<a href="www.google.com" (mouseover)="$mel.helloWorld.saludar($event, $element)">Holaaa</a>
 
-<h2>{{$ctrl.pepe}}</h2>
+<h2>{{$mel.pepe}}</h2>
+
+<h1>{{$mel.json # JSON}}
