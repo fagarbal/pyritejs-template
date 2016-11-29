@@ -54,6 +54,13 @@ class ByeWorld{
 class Melanie {
 	constructor() {
 		this.mel = this.helloWorld.name;
+		this.pepe = 'Hola Soy pepe';
+	}
+
+	hallo(a, b, pepe) {
+		console.log(pepe)
+		this.pepe = 'Adios pepe';
+		alert('HALLOOO');
 	}
 }
 
@@ -67,14 +74,17 @@ class HelloWorld{
 	constructor(exampleService, melanieService) {
 		this.name = ' Fabio '+ melanieService.hazMiauMiau();
 		this.exampleService = exampleService;
+		this.count = 0;
 		this.person = {
 			name: this.name,
 			getName: () => this.name
 		}
 	}
 
-	saludar(event) {
-		alert(this.exampleService.getTest(), event);
+	saludar(event, element) {
+		console.log(event);
+		this.name = 'pepe';
+		alert(this.count, event);
 	}
 
 	getName() {

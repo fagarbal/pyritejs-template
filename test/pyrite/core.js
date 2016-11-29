@@ -2,6 +2,8 @@ class PyriteCore {
 	constructor() {
 		this.components = {};
 		this.services = {};
+		this.ids = 0;
+		this.controllers = [0];
 	}
 
 	addService(controller, params) {
@@ -20,7 +22,8 @@ class PyriteCore {
 			template: params.template || '',
 			selector: params.selector,
 			inject: params.inject || [],
-			require: params.require || []
+			require: params.require || [],
+			as: params.as || '$ctrl'
 		};
 	}
 
@@ -70,11 +73,21 @@ class PyriteCore {
 			this.components[component].controller.prototype[this.toCamelCase(parent)] = parents[parent];
 		}
 
+		this.components[component].controller.prototype[this.components[component].as] = this.components[component].controller.prototype;
+
 		return new this.components[component].controller(...services);
 	}
 
 	getTemplateWithController(component, parents = {}) {
-		let controller = this.instanceController(component, parents);
+		let controller = null;
+
+		if (this.controllers[this.components[component].id]) {
+			controller = this.controllers[this.components[component].id];
+		} else {
+			controller = this.instanceController(component, parents);
+			this.components[component].id = ++this.ids;
+			this.controllers.push(controller);
+		}
 
 		parents[component] = controller;
 
@@ -82,29 +95,55 @@ class PyriteCore {
 
 		const variables = this.getWordsBetweenCurlies(template);
 
-		const templateProperties = variables.filter((element) => element.indexOf('(') < 0);
-		const templateMethods = variables.filter((element) => element.indexOf('(') >= 0);
+		this.components[component].templateProperties = variables;
 
-		this.components[component].templateProperties = templateProperties;
-		this.components[component].templateMethods = templateMethods;
+		const fn = (ctrl, component, method, core) => {
+			const ctrlAs = core.components[component].as;
+			const evalString = `
+				let ${ctrlAs} = arguments[0];
+				${method};`
 
-		for (let methodName of templateMethods){
-			template = template.split(`{{${methodName}}}`).join(this.getValue(controller, methodName.replace('()', ''))());
-		}
+			return eval(evalString);
+		};
 
-		for (let propertyName of templateProperties){
-			template = template.split(`{{${propertyName}}}`).join(this.getValue(controller, propertyName));
+		for (let propertyName of variables){
+			template = template.split(`{{${propertyName}}}`).join(fn.call(controller, controller, component, propertyName, this));
 		}
 
 		return [template, controller];
 	}
 
-	setAttributes(element, controller) {
+	setAttributes(element, controller, component) {
 		for (let children of element.children) {
-			let clickMethod = children.getAttribute('(click)');
-			if (!clickMethod) continue;
-			let method = clickMethod.replace('()', '');
-			children.addEventListener('click', this.getValue(controller, method).bind(controller[method.split('.')[0]]));
+			this.setAttributes(children, controller, component);
+
+			const attributes = new Array(...children.attributes);
+
+			const filteredAttributes = attributes.filter((attr) => {
+				return attr.name.indexOf('(') >= 0;
+			});
+
+			if (!filteredAttributes.length) continue;
+
+			const fn = (ctrl, component, method, children, elem, core, event) => {
+				const ctrlAs = core.components[component].as;
+				const evalString = `
+					let ${ctrlAs} = arguments[0];
+					let $element = arguments[3];
+					let $event = arguments[5];
+					${method};`
+				const result = eval(evalString);
+				this.renderComponents(elem.parentElement.parentElement);
+
+				return result;
+			};
+
+			for (let attribute of filteredAttributes) {
+				const attributeName = attribute.name.replace(/\(|\)/g, '');
+				const clickMethod = attribute.value;
+
+				children.addEventListener(attributeName, fn.bind(this, controller, component, clickMethod, children, element, this));
+			}
 		}
 	}
 
@@ -116,7 +155,7 @@ class PyriteCore {
 
 			element.innerHTML = template;
 
-			this.setAttributes(element, controller);
+			this.setAttributes(element, controller, component);
 
 			this.setIncludes(element, content);
 			this.renderComponents(element, parents);
