@@ -1,15 +1,15 @@
 import pyriteCore from './core.js';
 
 export const Component = (params) => {
-  return (controller) => {
-    pyriteCore.addComponent(controller, params);
-  };
+  	return (controller) => {
+    	pyriteCore.addComponent(controller, params);
+  	};
 };
 
 export const Service = (params) =>  {
-  return (controller) => {
-    pyriteCore.addService(controller, params);
-  };
+  	return (controller) => {
+    	pyriteCore.addService(controller, params);
+  	};
 };
 
 class AppClass {

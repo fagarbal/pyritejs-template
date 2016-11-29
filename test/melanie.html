@@ -9,4 +9,25 @@
 
 <h2>{{$mel.pepe}}</h2>
 
-<h1>{{$mel.json # JSON}}
+<h1 @if="$mel.lastname">{{$mel.json # JSON}}</h1>
+
+<input @if="$mel.invisible" type="text" @model="$mel.name">
+<input @if="$mel.invisible" type="text" @model="$mel.lastname">
+
+<h3>{{$mel.name}}</h3>
+<h3>{{$mel.lastname}}</h3>
+
+<div @for="item of $mel.items">
+	<div style='color:red'>
+		<p>@@item.name@@</p>
+		<input type='text' value='@@item.name@@'>
+		<p>@@item.lastName@@</p>
+		<div @for="pepe of $mel.items">
+			<div style='color:blue'>
+				<p>@@pepe.name@@</p>
+				<p>@@pepe.lastName@@</p>
+				<p style="color: orange">{{$mel.items # JSON}}</p>
+			</div>
+		</div>
+	</div>
+</div>

@@ -62,6 +62,18 @@ class PyriteCore {
 		return Array.from(new Set(results));
 	}
 
+	getWordsBetweenAts(str) {
+		var results = [],
+			re = /@@([^@@]+)@@/g,
+			text;
+
+		while (text = re.exec(str)) {
+			results.push(text[1]);
+		}
+
+		return Array.from(new Set(results));
+	}
+
 	instanceController(component, parents) {
 		let services = [];
 
@@ -117,8 +129,11 @@ class PyriteCore {
 			let evalString = `
 				let ${ctrlAs} = arguments[0];
 				${method};`
-
-			return eval(evalString);
+			try {
+				return eval(evalString);
+			}catch(e) {
+				return '';
+			}
 ;
 		};
 
@@ -129,9 +144,9 @@ class PyriteCore {
 		return [template, controller];
 	}
 
-	setAttributes(element, controller, component) {
+	setAttributes(element, controller, component, used) {
 		for (let children of element.children) {
-			this.setAttributes(children, controller, component);
+			this.setAttributes(children, controller, component, used);
 
 			const attributes = new Array(...children.attributes);
 
@@ -139,15 +154,79 @@ class PyriteCore {
 				return attr.name.indexOf('(') >= 0;
 			});
 
+			const coreAttributes = attributes.filter((attr) => {
+				return attr.name.indexOf('@') >= 0;
+			});
+
+			const fnCore = (ctrl, component, expresion, core, elem, event) => {
+				const ctrlAs = core.components[component].as;
+				let evalStringCustom = `
+					let ${ctrlAs} = arguments[0];
+					${expresion} = arguments[4].value;`;
+				eval(evalStringCustom);
+				this.setTemplate(component, elem.parentElement.parentElement.children, {}, expresion);
+			};
+
+			for (let attribute of coreAttributes) {
+				if (attribute.name === '@model' ) {
+					children.value = controller[attribute.value.replace(this.components[component].as+'.', '')] || '';
+					children.addEventListener('input', fnCore.bind(this, controller, component, attribute.value, this, children), false);
+					if (used === attribute.value) {
+						children.focus();
+					}
+				}
+
+				if (attribute.name === '@if') {
+					const ctrlAs = this.components[component].as;
+					let evalString = `
+						let ${ctrlAs} = arguments[1];
+						${attribute.value}`;
+					children.hidden = !Boolean(eval(evalString));
+				}
+
+				if (attribute.name === '@for') {
+					const ctrlAs = this.components[component].as;
+					let template = children.cloneNode(true);
+
+					children.innerHTML = '';
+
+					let subscope = attribute.value.split('of')[0].trim();
+
+					let that = this;
+
+					let evalsString = `
+						let ${ctrlAs} = arguments[1];
+
+						for(let ${attribute.value}) {
+							for (let i = 0; i < template.childNodes.length; i++) {
+								let temp = template.childNodes[i].cloneNode(true);
+
+								const variables = that.getWordsBetweenAts(temp.innerHTML);
+								const fn = (propertyName) => {
+									return eval(propertyName);
+								};
+
+								for (let propertyName of variables){
+									temp.innerHTML = temp.innerHTML.split('@@' + propertyName + '@@').join(fn.call(this, propertyName));
+								}
+
+								children.appendChild(temp);
+							}
+						}`;
+					eval(evalsString);
+				}
+			}
+
+
 			if (!filteredAttributes.length) continue;
 
-			const fn = (ctrl, component, method, children, elem, core, event) => {
+			const fn = (ctrl, component, expresion, children, elem, core, event) => {
 				const ctrlAs = core.components[component].as;
 				const evalString = `
 					let ${ctrlAs} = arguments[0];
 					let $element = arguments[3];
-					let $event = arguments[5];
-					${method};`
+					let $event = arguments[6];
+					${expresion};`
 				const result = eval(evalString);
 				this.renderComponents(elem.parentElement.parentElement);
 
@@ -163,7 +242,7 @@ class PyriteCore {
 		}
 	}
 
-	setTemplate(component, elements, parents) {
+	setTemplate(component, elements, parents, used = false) {
 		for (let element of elements) {
 			let content = element.cloneNode(true);
 
@@ -171,7 +250,7 @@ class PyriteCore {
 
 			element.innerHTML = template;
 
-			this.setAttributes(element, controller, component);
+			this.setAttributes(element, controller, component, used);
 
 			this.setIncludes(element, content);
 			this.renderComponents(element, parents);

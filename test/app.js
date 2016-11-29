@@ -56,6 +56,19 @@ class Melanie {
 	constructor() {
 		this.mel = this.helloWorld.name;
 		this.pepe = 'Hola Soy pepe';
+		this.name = 'Soy Fabio';
+		this.lastname = 'ds'
+		this.invisible = false;
+		this.items = [{
+			name: 'Fabio',
+			lastName: 'Garcia'
+		},{
+			name: 'Pepe',
+			lastName: 'Fer'
+		},{
+			name: 'Tu',
+			lastName: 'Madre'
+		}];
 		this.json = {
 			a : "hola"
 		}
@@ -64,6 +77,8 @@ class Melanie {
 	hallo(a, b, pepe) {
 		console.log(pepe)
 		this.pepe = 'Adios pepe';
+		this.invisible = !this.invisible;
+		this.helloWorld.nover = true;
 		alert('HALLOOO');
 	}
 }
@@ -79,6 +94,7 @@ class HelloWorld{
 		this.name = ' LALALALa '+ melanieService.hazMiauMiau();
 		this.exampleService = exampleService;
 		this.count = 0;
+		this.nover = false;
 		this.person = {
 			name: this.name,
 			getName: () => this.name
