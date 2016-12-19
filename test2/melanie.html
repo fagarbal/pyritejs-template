@@ -1,0 +1,34 @@
+<h2 style="color:red"> Hola soy Melanie</h2>
+<h2 style="color:green"> Hola soy Fabio</h2>
+<button (click)="$mel.helloWorld.saludar($event, $element)">{{$mel.helloWorld.person.getName()}}</button>
+<p>{{   $mel.helloWorld.person.getName() + 'Holaaa' }}</p>
+<span>
+	<span (click)="$mel.hallo($event, $element, '{{$mel.pepe}}')">{{$mel.mel}}</span>
+</span>
+<a href="www.google.com" (mouseover)="$mel.helloWorld.saludar($event, $element)">Holaaa</a>
+
+<h2>{{$mel.pepe}}</h2>
+
+<h1 @if="$mel.lastname">{{$mel.json # JSON}}</h1>
+
+<input @if="$mel.invisible" type="text" @model="$mel.name">
+<input @if="$mel.invisible" type="text" @model="$mel.lastname">
+
+<h3>{{$mel.name}}</h3>
+<h3>{{$mel.lastname}}</h3>
+
+<div @for="item of $mel.items">
+	<div style='color:red'>
+		<p>@@item.name@@</p>
+		<input type='text' value='@@item.name@@'>
+		<p>@@item.lastName@@</p>
+		<div @for="pepe of $mel.items">
+			<div style='color:blue'>
+				<p>@@pepe.name@@</p>
+				<p>@@pepe.lastName@@</p>
+				<p style="color: orange">{{$mel.items # JSON}}</p>
+			</div>
+		</div>
+	</div>
+</div>
+<bye-world></bye-world>

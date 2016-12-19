@@ -11,7 +11,7 @@ import runSequence from 'run-sequence';
 import babelConfig from './babelrc.json';
 
 gulp.task('build:js', () =>
-	browserify('test/app.js', { debug: true })
+	browserify('test2/app.js', { debug: true })
 	.transform(stringify(['.html']))
 	.transform(babelify, babelConfig)
 	.bundle()
@@ -23,14 +23,14 @@ gulp.task('build:js', () =>
 );
 
 gulp.task('copy:html', () => 
-	gulp.src('test/index.html')
+	gulp.src('test2/index.html')
     .pipe(gulp.dest('dist/'))
 );
 
 gulp.task('serve',() => {
 	runSequence('build:js', 'copy:html', 'browser-sync', () => {
 		gulp.watch(['node_modules/pyrite/lib/**/*.js'], ['build:js', browserSync.reload]);
-		gulp.watch(['test/**/*.js','test/**/*.html'], ['build:js', 'copy:html', browserSync.reload]);
+		gulp.watch(['test2/**/*.js','test2/**/*.html'], ['build:js', 'copy:html', browserSync.reload]);
 	});
 });
 

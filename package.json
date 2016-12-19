@@ -9,6 +9,7 @@
     "babelify": "^7.3.0",
     "browser-sync": "^2.14.0",
     "browserify": "^13.1.0",
+    "eslint": "^3.12.2",
     "gulp": "^3.9.1",
     "gulp-babel": "^6.1.2",
     "gulp-sourcemaps": "^1.6.0",
